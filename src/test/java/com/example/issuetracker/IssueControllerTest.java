@@ -6,6 +6,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClient;
 
 import tools.jackson.databind.ObjectMapper;
@@ -44,7 +45,7 @@ class IssueControllerTest {
                 "startDate": "2026-10-24",
                 "endDate": "2026-10-30"
             }
-            """;
+        """;
 
         ResponseEntity<String> response = client.post()
             .uri("/api/issues")
@@ -64,29 +65,29 @@ class IssueControllerTest {
         RestClient client = RestClient.create("http://localhost:" + port);
 
         String requestBody = """
-                {
-                    "title": "GET endpoint test issue",
-                    "description": "Verify issue retrieval",
-                    "priority": "HIGH",
-                    "owner": "Phillip",
-                    "startDate": "2026-10-24",
-                    "endDate": "2026-10-30"
-                }
-                """;
+            {
+                "title": "GET endpoint test issue",
+                "description": "Verify issue retrieval",
+                "priority": "HIGH",
+                "owner": "Phillip",
+                "startDate": "2026-10-24",
+                "endDate": "2026-10-30"
+            }
+        """;
 
         ResponseEntity<String> created = client.post()
-                .uri("/api/issues")
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(requestBody)
-                .retrieve()
-                .toEntity(String.class);
+            .uri("/api/issues")
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(requestBody)
+            .retrieve()
+            .toEntity(String.class);
 
         assertEquals(HttpStatus.CREATED, created.getStatusCode());
 
         ResponseEntity<String> response = client.get()
-                .uri("/api/issues")
-                .retrieve()
-                .toEntity(String.class);
+            .uri("/api/issues")
+            .retrieve()
+            .toEntity(String.class);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
@@ -99,22 +100,22 @@ class IssueControllerTest {
         RestClient client = RestClient.create("http://localhost:" + port);
 
         String requestBody = """
-                {
-                    "title": "Issue to delete",
-                    "description": "Testing the DELETE endpoint",
-                    "priority": "LOW",
-                    "owner": "Phillip",
-                    "startDate": "2026-10-24",
-                    "endDate": "2026-10-30"
-                }
-                """;
+            {
+                "title": "Issue to delete",
+                "description": "Testing the DELETE endpoint",
+                "priority": "LOW",
+                "owner": "Phillip",
+                "startDate": "2026-10-24",
+                "endDate": "2026-10-30"
+            }
+        """;
 
         ResponseEntity<String> created = client.post()
-                .uri("/api/issues")
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(requestBody)
-                .retrieve()
-                .toEntity(String.class);
+            .uri("/api/issues")
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(requestBody)
+            .retrieve()
+            .toEntity(String.class);
 
         assertEquals(HttpStatus.CREATED, created.getStatusCode());
         assertNotNull(created.getBody());
@@ -123,9 +124,9 @@ class IssueControllerTest {
         long id = issue.get("id").asLong();
 
         ResponseEntity<Void> deleted = client.delete()
-                .uri("/api/issues/{id}", id)
-                .retrieve()
-                .toBodilessEntity();
+            .uri("/api/issues/{id}", id)
+            .retrieve()
+            .toBodilessEntity();
 
         assertEquals(HttpStatus.NO_CONTENT, deleted.getStatusCode());
 
@@ -142,6 +143,107 @@ class IssueControllerTest {
         for (JsonNode issueNode : issues)
             assertNotEquals(id, issueNode.get("id").asLong());
 
+    }
+
+    @Test 
+    void shouldUpdateExistingIssue() throws Exception {
+        RestClient client = RestClient.create("http://localhost:" + port);
+
+        String requestBody = """
+            {
+                "title": "Issue to update",
+                "description": "Testing the PUT endpoint",
+                "priority": "MEDIUM",
+                "owner": "Phillip",
+                "startDate": "2026-10-27",
+                "endDate": "2026-10-30"
+            }
+        """;
+
+        ResponseEntity<String> created = client.post()
+            .uri("/api/issues")
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(requestBody)
+            .retrieve()
+            .toEntity(String.class);
+        
+        assertEquals(HttpStatus.CREATED, created.getStatusCode());
+        assertNotNull(created.getBody());
+
+        JsonNode createdIssue = new ObjectMapper().readTree(created.getBody());
+        long id = createdIssue.get("id").asLong();
+
+        String updatedIssue = """
+            {
+                "title": "Updated issue",
+                "description": "Testing the PUT endpoint",
+                "priority": "LOW",
+                "owner": "Phillip",
+                "startDate": "2026-10-27",
+                "endDate": "2026-10-31"
+            }
+        """;
+
+        ResponseEntity<String> updated = client.put()
+            .uri("/api/issues/{id}", id)
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(updatedIssue)
+            .retrieve()
+            .toEntity(String.class);
+
+        assertEquals(HttpStatus.OK, updated.getStatusCode());
+
+        ResponseEntity<String> response = client.get()
+            .uri("/api/issues")
+            .retrieve()
+            .toEntity(String.class);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertTrue(response.getBody().startsWith("["));
+        JsonNode issues = new ObjectMapper().readTree(response.getBody());
+        JsonNode issue = issues.get(0);
+        assertEquals("Updated issue", issue.get("title").asString());
+        assertEquals("LOW", issue.get("priority").asString());
+        assertEquals("2026-10-31", issue.get("endDate").asString());
+    }
+
+    @Test
+    void shouldReturnNotFoundWhenUpdatingNonexistentIssue() {
+        RestClient client = RestClient.create("http://localhost:" + port);
+
+        long nonexistentId = 1L;
+
+        String updatedIssue = """
+            {
+                "title": "Updated issue",
+                "description": "Testing a nonexistent issue",
+                "priority": "LOW",
+                "owner": "Phillip",
+                "startDate": "2026-10-27",
+                "endDate": "2026-10-31"
+            }
+        """;
+
+        HttpClientErrorException exception = assertThrows(
+            HttpClientErrorException.class,
+            () -> client.put()
+                .uri("/api/issues/{id}", nonexistentId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(updatedIssue)
+                .retrieve()
+                .toBodilessEntity()
+        );
+
+        assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
+
+        ResponseEntity<String> response = client.get()
+            .uri("/api/issues")
+            .retrieve()
+            .toEntity(String.class);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals("[]", response.getBody());
     }
 }
 
