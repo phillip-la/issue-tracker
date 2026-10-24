@@ -1,15 +1,29 @@
 package com.example.issuetracker;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+
 import java.time.LocalDate;
 
+@Entity 
 public class Issue {
     
+    @Id 
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
     private String title;
     private String description;
     private String priority;
     private String owner;
     private LocalDate startDate;
     private LocalDate endDate;
+
+    protected Issue() {
+
+    }
 
     public Issue(
         String title,
@@ -25,6 +39,10 @@ public class Issue {
         this.owner = owner;
         this.startDate = startDate;
         this.endDate = endDate;
+    }
+
+    public Long getId() {
+        return id;
     }
 
     public String getTitle() {
