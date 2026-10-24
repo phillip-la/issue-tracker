@@ -30,5 +30,11 @@ public class IssueController {
     public List<Issue> getAllIssues() {
         return issueRepository.findAll();
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteIssue(@PathVariable Long id) {
+        issueRepository.deleteById(id);
+        return ResponseEntity.noContent().build();
+    }
 }
 
