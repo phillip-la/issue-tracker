@@ -12,6 +12,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import org.springframework.http.MediaType;
+
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class IssueControllerTest {
 
@@ -44,6 +46,41 @@ class IssueControllerTest {
         assertNotNull(response.getBody());
         assertTrue(response.getBody().contains("\"id\":"));
         assertTrue(response.getBody().contains("\"title\":\"Login page error\""));
+    }
+
+    @Test
+    void shouldGetAllIssues() {
+        RestClient client = RestClient.create("http://localhost:" + port);
+
+        String requestBody = """
+                {
+                    "title": "GET endpoint test issue",
+                    "description": "Verify issue retrieval",
+                    "priority": "HIGH",
+                    "owner": "Phillip",
+                    "startDate": "2026-10-24",
+                    "endDate": "2026-10-30"
+                }
+                """;
+
+        ResponseEntity<String> created = client.post()
+                .uri("/api/issues")
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(requestBody)
+                .retrieve()
+                .toEntity(String.class);
+
+        assertEquals(HttpStatus.CREATED, created.getStatusCode());
+
+        ResponseEntity<String> response = client.get()
+                .uri("/api/issues")
+                .retrieve()
+                .toEntity(String.class);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertTrue(response.getBody().startsWith("["));
+        assertTrue(response.getBody().contains("\"title\":\"GET endpoint test issue\""));
     }
 }
 
