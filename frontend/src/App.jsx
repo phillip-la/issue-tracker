@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react'
 import './App.css'
 import axios from 'axios'
 
+import IssueForm from './components/IssueForm'
+
 function App() {
   const [issues, setIssues] = useState([])
 
@@ -15,9 +17,22 @@ function App() {
       })
   }, [])
 
+  async function handleCreateIssue(newIssue) {
+    try {
+      const response = await axios.post('/api/issues', newIssue)
+      setIssues(prevIssues => [...prevIssues, response.data])
+      return response.data
+    } catch (err) {
+      console.error('Failed to create issue:', err)
+      throw(err)
+    }
+  }
+
   return (
     <div>
       <h1>Phillip's Issue Tracker</h1>
+
+      <IssueForm onCreateIssue={handleCreateIssue}/>
 
       <ul>
         {
