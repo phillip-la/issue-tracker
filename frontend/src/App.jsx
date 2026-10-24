@@ -3,6 +3,7 @@ import './App.css'
 import axios from 'axios'
 
 import IssueForm from './components/IssueForm'
+import IssueList from './components/IssueList'
 
 function App() {
   const [issues, setIssues] = useState([])
@@ -23,8 +24,20 @@ function App() {
       setIssues(prevIssues => [...prevIssues, response.data])
       return response.data
     } catch (err) {
-      console.error('Failed to create issue:', err)
+      console.error('Failed to create issue: ', err)
       throw(err)
+    }
+  }
+
+  async function handleDeleteIssue(id) {
+    try {
+      await axios.delete(`/api/issues/${id}`)
+
+      setIssues(prevIssues =>
+        prevIssues.filter(issue => issue.id !== id)
+      )
+    } catch (error) {
+      console.error('Failed to delete issue: ', error)
     }
   }
 
@@ -34,17 +47,10 @@ function App() {
 
       <IssueForm onCreateIssue={handleCreateIssue}/>
 
-      <ul>
-        {
-          issues.map(
-            issue => (
-              <li key={issue.id}>
-                {issue.title} - {issue.priority}
-              </li>
-            )
-          )
-        }
-      </ul>
+      <IssueList
+        issues={issues}
+        onDeleteIssue={handleDeleteIssue}
+      />
     </div>
   )
 }
