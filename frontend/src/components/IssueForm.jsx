@@ -59,7 +59,6 @@ function IssueForm({ onCreateIssue }) {
 
             <select 
                 name="priority" 
-                defaultValue="MEDIUM" 
                 value={formData.priority}
                 onChange={handleChange}
             >
