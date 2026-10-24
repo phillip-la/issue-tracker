@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+
 @RestController
 @RequestMapping("/api/issues")
 public class IssueController {
@@ -35,6 +36,24 @@ public class IssueController {
     public ResponseEntity<Void> deleteIssue(@PathVariable Long id) {
         issueRepository.deleteById(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Issue> updateIssue(@PathVariable Long id, @RequestBody Issue updatedIssue) {
+        return issueRepository.findById(id)
+            .map(existingIssue -> {
+                existingIssue.setTitle(updatedIssue.getTitle());
+                existingIssue.setDescription(updatedIssue.getDescription());
+                existingIssue.setPriority(updatedIssue.getPriority());
+                existingIssue.setOwner(updatedIssue.getOwner());
+                existingIssue.setStartDate(updatedIssue.getStartDate());
+                existingIssue.setEndDate(updatedIssue.getEndDate());
+
+                Issue savedIssue = issueRepository.save(existingIssue);
+
+                return ResponseEntity.ok(savedIssue);
+            })
+            .orElseGet(() -> ResponseEntity.notFound().build());
     }
 }
 
