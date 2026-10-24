@@ -7,6 +7,7 @@ import IssueList from './components/IssueList'
 
 function App() {
   const [issues, setIssues] = useState([])
+  const [editingIssue, setEditingIssue] = useState(null)
 
   useEffect(() => {
     axios.get('api/issues')
@@ -41,15 +42,46 @@ function App() {
     }
   }
 
+  function handleEditIssue(issue) {
+    setEditingIssue(issue)
+  }
+
+  async function handleUpdateIssue(id, updatedIssue) {
+    try {
+      const response = await axios.put(`/api/issues/${id}`, updatedIssue)
+
+      setIssues(prevIssues =>
+        prevIssues.map(issue =>
+          issue.id === id ? response.data : issue
+        )
+      )
+
+      setEditingIssue(null)
+    } catch (error) {
+      console.error('Failed to update issue: ', error)
+      throw error
+    }
+  }
+
   return (
     <div>
       <h1>Phillip's Issue Tracker</h1>
 
-      <IssueForm onCreateIssue={handleCreateIssue}/>
+      {editingIssue && (
+        <p>Currently editing: {editingIssue.title}</p>
+      )}
+
+      <IssueForm 
+        key={editingIssue?.id ?? 'new'}
+        onCreateIssue={handleCreateIssue}
+        editingIssue={editingIssue}
+        onUpdateIssue={handleUpdateIssue}
+      />
 
       <IssueList
         issues={issues}
         onDeleteIssue={handleDeleteIssue}
+        onEditIssue={handleEditIssue}
       />
     </div>
   )

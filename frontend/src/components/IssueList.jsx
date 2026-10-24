@@ -1,4 +1,4 @@
-function IssueList({ issues, onDeleteIssue }) {
+function IssueList({ issues, onDeleteIssue, onEditIssue }) {
     return (
         <ul>
             {
@@ -11,6 +11,13 @@ function IssueList({ issues, onDeleteIssue }) {
                             onClick={() => onDeleteIssue(issue.id)}
                         >
                             Delete
+                        </button>
+
+                        <button
+                            type="button"
+                            onClick={() => onEditIssue(issue)}
+                        >
+                            Edit
                         </button>
                     </li>
                 ))

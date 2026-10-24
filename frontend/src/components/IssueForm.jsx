@@ -1,13 +1,13 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
-function IssueForm({ onCreateIssue }) {
+function IssueForm({ onCreateIssue, editingIssue, onUpdateIssue }) {
     const [formData, setFormData] = useState({
-        title: '',
-        description: '',
-        priority: 'MEDIUM',
-        owner: '',
-        startDate: '',
-        endDate: ''
+        title: editingIssue?.title ?? '',
+        description: editingIssue?.description ?? '',
+        priority: editingIssue?.priority ?? 'MEDIUM',
+        owner: editingIssue?.owner ?? '',
+        startDate: editingIssue?.startDate ?? '',
+        endDate: editingIssue?.endDate ?? ''
     })
 
     function handleChange(e) {
@@ -23,7 +23,11 @@ function IssueForm({ onCreateIssue }) {
         e.preventDefault()
         
         try {
-            await onCreateIssue(formData)
+            if (editingIssue) {
+                await onUpdateIssue(editingIssue.id, formData)
+            } else {
+                await onCreateIssue(formData)
+            }
 
             setFormData({
             title: '',
@@ -89,7 +93,9 @@ function IssueForm({ onCreateIssue }) {
                 onChange={handleChange}
             />
 
-            <button type="submit">Create Issue</button>
+            <button type="submit">
+                {editingIssue ? 'Update Issue' : 'Create Issue'}
+            </button>
         </form>
     )
 }
