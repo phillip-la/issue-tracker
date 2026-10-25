@@ -1,25 +1,17 @@
+import IssueItem from './IssueItem'
+import './IssueList.css'
+
 function IssueList({ issues, onDeleteIssue, onEditIssue }) {
     return (
         <ul>
             {
                 issues.map(issue => (
-                    <li key={issue.id}>
-                        {issue.title} - {issue.priority}
-
-                        <button
-                            type="button"
-                            onClick={() => onDeleteIssue(issue.id)}
-                        >
-                            Delete
-                        </button>
-
-                        <button
-                            type="button"
-                            onClick={() => onEditIssue(issue)}
-                        >
-                            Edit
-                        </button>
-                    </li>
+                    <IssueItem
+                        key={issue.id}
+                        issue={issue}
+                        onEditIssue={onEditIssue}
+                        onDeleteIssue={onDeleteIssue}
+                    />
                 ))
             }
         </ul>

@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import './IssueForm.css'
 
 function IssueForm({ onCreateIssue, editingIssue, onUpdateIssue }) {
     const [formData, setFormData] = useState({
@@ -43,7 +44,7 @@ function IssueForm({ onCreateIssue, editingIssue, onUpdateIssue }) {
     }
  
     return (
-        <form onSubmit={handleSubmit}>
+        <form className="issue-form" onSubmit={handleSubmit}>
             <input
                 type="text"
                 name="title"
@@ -94,7 +95,7 @@ function IssueForm({ onCreateIssue, editingIssue, onUpdateIssue }) {
             />
 
             <button type="submit">
-                {editingIssue ? 'Update Issue' : 'Create Issue'}
+                {editingIssue ? 'Update issue' : 'Create issue'}
             </button>
         </form>
     )

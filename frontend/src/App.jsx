@@ -64,25 +64,31 @@ function App() {
   }
 
   return (
-    <div>
-      <h1>Phillip's Issue Tracker</h1>
+    <div className="container">
+      <h1 className="main-heading">Unofficial IBM Issue Tracker</h1>
+      
+      <div className="app-grid">
+        <aside className="form-panel">
+          {editingIssue && (
+            <p>Currently editing: {editingIssue.title}</p>
+          )}
 
-      {editingIssue && (
-        <p>Currently editing: {editingIssue.title}</p>
-      )}
+          <IssueForm 
+            key={editingIssue?.id ?? 'new'}
+            onCreateIssue={handleCreateIssue}
+            editingIssue={editingIssue}
+            onUpdateIssue={handleUpdateIssue}
+          />
+        </aside>
 
-      <IssueForm 
-        key={editingIssue?.id ?? 'new'}
-        onCreateIssue={handleCreateIssue}
-        editingIssue={editingIssue}
-        onUpdateIssue={handleUpdateIssue}
-      />
-
-      <IssueList
-        issues={issues}
-        onDeleteIssue={handleDeleteIssue}
-        onEditIssue={handleEditIssue}
-      />
+        <main className="issues-panel">
+          <IssueList
+            issues={issues}
+            onDeleteIssue={handleDeleteIssue}
+            onEditIssue={handleEditIssue}
+          />
+        </main>
+      </div>
     </div>
   )
 }

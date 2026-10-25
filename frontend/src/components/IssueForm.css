@@ -1,0 +1,29 @@
+.issue-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+}
+
+.issue-form input,
+.issue-form textarea,
+.issue-form select {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font: inherit;
+  background-color: #010736;
+}
+
+.issue-form textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+.issue-form button {
+  padding: 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}

@@ -182,3 +182,53 @@
     border-right-color: var(--border);
   }
 }
+
+.app {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 32px 24px;
+}
+
+.app-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr);
+  gap: 32px;
+  align-items: start;
+  margin-top: 5em;
+}
+
+.form-panel {
+  position: sticky;
+  top: 24px;
+}
+
+.issues-panel {
+  min-width: 0;
+}
+
+/* Mobile layout */
+@media (max-width: 768px) {
+  .app-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .form-panel {
+    position: static;
+  }
+}
+
+ul {
+  margin-top: 0;
+}
+
+.container {
+  background-color: #F3E3D0;
+  padding-left: 5em;
+  padding-right: 5em;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+
+.main-heading {
+  color: #2391FF;
+  margin-top: 1.5em;
+}
