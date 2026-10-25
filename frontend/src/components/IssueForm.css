@@ -27,3 +27,52 @@
   border-radius: 6px;
   cursor: pointer;
 }
+
+.ai-suggest-button {
+  padding: 12px;
+  border: 1px solid #60a5fa;
+  border-radius: 8px;
+  background: #2196F3;
+  color: black;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.ai-suggest-button:hover:not(:disabled) {
+  background: #dbeafe;
+}
+
+.ai-suggest-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.ai-suggestion {
+  padding: 16px;
+  border: 1px solid #bfdbfe;
+  border-radius: 10px;
+  background: #eff6ff;
+  color: #1e3a8a;
+}
+
+.ai-suggestion h4 {
+  margin: 0 0 12px;
+}
+
+.ai-suggestion p {
+  line-height: 1.5;
+}
+
+.ai-suggestion button {
+  padding: 10px 14px;
+  border: none;
+  border-radius: 6px;
+  background: #722F99;
+  color: white;
+  cursor: pointer;
+  margin-top: 1em;
+}
+
+.ai-suggestion-subheading {
+    margin-bottom: 1em;
+}

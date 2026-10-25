@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import './IssueForm.css'
+import axios from 'axios'
 
 function IssueForm({ onCreateIssue, editingIssue, onUpdateIssue }) {
     const [formData, setFormData] = useState({
@@ -11,6 +12,9 @@ function IssueForm({ onCreateIssue, editingIssue, onUpdateIssue }) {
         endDate: editingIssue?.endDate ?? ''
     })
 
+    const [aiSuggestion, setAiSuggestion] = useState(null)
+    const [isSuggesting, setIsSuggesting] = useState(false)
+
     function handleChange(e) {
         const { name, value } = e.target
 
@@ -18,6 +22,24 @@ function IssueForm({ onCreateIssue, editingIssue, onUpdateIssue }) {
             ...prev,
             [name]: value
         }))
+    }
+
+    const handleSuggestPriority = async () => {
+        setIsSuggesting(true)
+        setAiSuggestion(null)
+
+        try {
+            const response = await axios.post('/api/ai/suggest-priority', {
+                title: formData.title,
+                description: formData.description
+            })
+
+            setAiSuggestion(response.data)
+        } catch (error) {
+            console.error('AI prioritisation failed:', error)
+        } finally {
+            setIsSuggesting(false)
+        }
     }
 
     async function handleSubmit(e) {
@@ -31,13 +53,15 @@ function IssueForm({ onCreateIssue, editingIssue, onUpdateIssue }) {
             }
 
             setFormData({
-            title: '',
-            description: '',
-            priority: 'MEDIUM',
-            owner: '',
-            startDate: '',
-            endDate: ''
+                title: '',
+                description: '',
+                priority: 'MEDIUM',
+                owner: '',
+                startDate: '',
+                endDate: ''
             })
+
+            setAiSuggestion(null)
         } catch (error) {
             console.error('Unable to submit form:', error)
         }
@@ -72,12 +96,48 @@ function IssueForm({ onCreateIssue, editingIssue, onUpdateIssue }) {
                 <option value="HIGH">High</option>
             </select>
 
+            <button
+                type="button"
+                className="ai-suggest-button"
+                onClick={handleSuggestPriority}
+                disabled={isSuggesting || !formData.title.trim()}
+            >
+                {isSuggesting ? 'Analysing issue...' : 'Suggest priority with AI'}
+            </button>
+
+            {aiSuggestion && (
+                <div className="ai-suggestion">
+                    <h4>AI Recommendation</h4>
+
+                    <p className="ai-suggestion-subheading">
+                        Suggested priority:
+                        <strong> {aiSuggestion.priority}</strong>
+                    </p>
+
+                    <p>{aiSuggestion.reason}</p>
+
+                    <button
+                        type="button"
+                        onClick={() => {
+                            setFormData(prev => ({
+                            ...prev,
+                            priority: aiSuggestion.priority
+                            }))
+                            setAiSuggestion(null)
+                        }}
+                    >
+                        Apply suggestion
+                    </button>
+                </div>
+            )}
+
             <input
                 type="text"
                 name="owner"
                 placeholder="Issue owner"
                 value={formData.owner}
                 onChange={handleChange}
+                required
             />
 
             <input 
@@ -85,6 +145,7 @@ function IssueForm({ onCreateIssue, editingIssue, onUpdateIssue }) {
                 name="startDate"
                 value={formData.startDate}
                 onChange={handleChange}
+                required
             />
 
             <input
@@ -92,6 +153,7 @@ function IssueForm({ onCreateIssue, editingIssue, onUpdateIssue }) {
                 name="endDate" 
                 value={formData.endDate}
                 onChange={handleChange}
+                required
             />
 
             <button type="submit">

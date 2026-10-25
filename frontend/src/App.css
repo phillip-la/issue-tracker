@@ -191,15 +191,19 @@
 
 .app-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr);
+  grid-template-columns: minmax(0, 1.5fr) minmax(0, 1.5fr);
   gap: 32px;
   align-items: start;
   margin-top: 5em;
+  padding-bottom: 10em;
 }
 
 .form-panel {
   position: sticky;
   top: 24px;
+  max-height: calc(100vh - 50px);
+  overflow-y: auto;
+  padding-bottom: 5em;
 }
 
 .issues-panel {
@@ -231,4 +235,9 @@ ul {
 .main-heading {
   color: #2391FF;
   margin-top: 1.5em;
+}
+
+.editing-status-messsage {
+  margin-bottom: 1em;
+  color: black;
 }

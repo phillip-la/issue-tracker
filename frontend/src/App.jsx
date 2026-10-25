@@ -70,7 +70,7 @@ function App() {
       <div className="app-grid">
         <aside className="form-panel">
           {editingIssue && (
-            <p>Currently editing: {editingIssue.title}</p>
+            <p className="editing-status-messsage">Currently editing: {editingIssue.title}</p>
           )}
 
           <IssueForm 
