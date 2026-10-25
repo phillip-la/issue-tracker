@@ -43,7 +43,6 @@ jobs:
           DB_PASSWORD: ci_test_password
 
   frontend:
-    name: Frontend CI
     runs-on: ubuntu-latest
 
     defaults:
