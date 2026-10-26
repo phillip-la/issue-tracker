@@ -7,7 +7,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import org.springframework.web.bind.annotation.CrossOrigin;
 
+@CrossOrigin(origins = "https://nice-field-0a0d23900.3.azurestaticapps.net")
 @RestController
 @RequestMapping("/api/issues")
 public class IssueController {

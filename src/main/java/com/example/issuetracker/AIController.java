@@ -3,6 +3,9 @@ package com.example.issuetracker;
 import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
+import org.springframework.web.bind.annotation.CrossOrigin;
+
+@CrossOrigin(origins = "https://nice-field-0a0d23900.3.azurestaticapps.net")
 @RestController
 @RequestMapping("/api/ai")
 public class AIController {
